@@ -445,11 +445,11 @@
     <!-- ═══ MAIN CONTENT ═══ -->
     <div class="container mx-auto px-4 py-6 relative z-10">
 
-        <!-- Navigation Tabs (using query parameters) -->
+        <!-- Navigation Tabs with clean paths -->
         <div class="nav-tabs">
-            <a href="?page=home" class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</a>
-            <a href="?page=tweets" class="nav-tab" data-page="tweets">🐦 Funny Tweets</a>
-            <a href="?page=screenshots" class="nav-tab" data-page="screenshots">📸 Funny Screenshots</a>
+            <a href="/" class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</a>
+            <a href="/tweets" class="nav-tab" data-page="tweets">🐦 Funny Tweets</a>
+            <a href="/screenshots" class="nav-tab" data-page="screenshots">📸 Funny Screenshots</a>
         </div>
 
         <!-- Search -->
@@ -670,7 +670,14 @@
                 screenshotList.appendChild(item);
             });
 
-            // ─── routing: handle query parameter ───
+            // ─── routing based on pathname ───
+            function getPageFromPath(path) {
+                if (path === '/' || path === '') return 'home';
+                if (path === '/tweets') return 'tweets';
+                if (path === '/screenshots') return 'screenshots';
+                return 'home'; // fallback
+            }
+
             function navigateTo(page) {
                 // update active tab
                 navTabs.forEach(tab => {
@@ -696,41 +703,29 @@
                 filterContent('');
             }
 
-            function getPageFromUrl() {
-                const params = new URLSearchParams(window.location.search);
-                const page = params.get('page') || 'home';
-                return ['home', 'tweets', 'screenshots'].includes(page) ? page : 'home';
-            }
-
-            function updateUrl(page) {
-                const url = new URL(window.location);
-                url.search = `?page=${page}`;
-                window.history.pushState({ page: page }, '', url);
+            function handleRoute() {
+                const path = window.location.pathname;
+                const page = getPageFromPath(path);
+                navigateTo(page);
             }
 
             // handle popstate (back/forward)
-            window.addEventListener('popstate', function(event) {
-                const page = event.state?.page || getPageFromUrl();
-                navigateTo(page);
-            });
+            window.addEventListener('popstate', handleRoute);
 
-            // click on nav tabs -> update URL and navigate
+            // click on nav tabs -> update URL with pushState
             navTabs.forEach(tab => {
                 tab.addEventListener('click', function(e) {
                     e.preventDefault();
+                    const href = this.getAttribute('href');
                     const page = this.dataset.page;
-                    updateUrl(page);
+                    // update URL without reload
+                    window.history.pushState({ page: page }, '', href);
                     navigateTo(page);
                 });
             });
 
-            // initial load: set page from URL
-            const initialPage = getPageFromUrl();
-            // if URL has no param, set it to home
-            if (!window.location.search.includes('page=')) {
-                updateUrl('home');
-            }
-            navigateTo(initialPage);
+            // initial load: set page from current path
+            handleRoute();
 
             // ─── search function ───
             function filterContent(term) {
