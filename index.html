@@ -173,6 +173,8 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             backdrop-filter: blur(4px);
+            text-decoration: none;
+            display: inline-block;
         }
         .nav-tab:hover {
             background: rgba(255, 255, 255, 0.18);
@@ -296,11 +298,20 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
             border-color: rgba(255, 255, 255, 0.2);
         }
+        .gallery-item a {
+            display: block;
+            width: 100%;
+            cursor: pointer;
+        }
         .gallery-item img {
             width: 100%;
             border-radius: 10px;
             background: #111;
             display: block;
+            transition: opacity 0.2s;
+        }
+        .gallery-item img:hover {
+            opacity: 0.9;
         }
         .gallery-item .gallery-label {
             margin-top: 8px;
@@ -309,7 +320,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* ── page sections (hide/show) ── */
+        /* ── page sections (hide/show via hash) ── */
         .page-section {
             display: none;
         }
@@ -434,11 +445,11 @@
     <!-- ═══ MAIN CONTENT ═══ -->
     <div class="container mx-auto px-4 py-6 relative z-10">
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (using hash links) -->
         <div class="nav-tabs">
-            <button class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</button>
-            <button class="nav-tab" data-page="tweets"><i class="fas fa-twitter mr-2"></i>Funny Tweets</button>
-            <button class="nav-tab" data-page="screenshots"><i class="fas fa-image mr-2"></i>Funny Screenshots</button>
+            <a href="#home" class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</a>
+            <a href="#tweets" class="nav-tab" data-page="tweets">🐦 Funny Tweets</a>
+            <a href="#screenshots" class="nav-tab" data-page="screenshots">📸 Funny Screenshots</a>
         </div>
 
         <!-- Search -->
@@ -471,7 +482,7 @@
         <!-- ═══ PAGE: FUNNY TWEETS ═══ -->
         <div id="page-tweets" class="page-section">
             <div class="section-divider"></div>
-            <h2 class="section-title"><i class="fas fa-twitter mr-3"></i>Funny Tweets</h2>
+            <h2 class="section-title">🐦 Funny Tweets</h2>
             <p class="text-center text-gray-400 text-sm md:text-base px-4 mb-6 italic">
                 a curated collection of the funniest tweets
             </p>
@@ -481,7 +492,7 @@
         <!-- ═══ PAGE: FUNNY SCREENSHOTS ═══ -->
         <div id="page-screenshots" class="page-section">
             <div class="section-divider"></div>
-            <h2 class="section-title"><i class="fas fa-image mr-3"></i>Funny Screenshots</h2>
+            <h2 class="section-title">📸 Funny Screenshots</h2>
             <p class="text-center text-gray-400 text-sm md:text-base px-4 mb-6 italic">
                 a curated collection of the funniest screenshots
             </p>
@@ -514,6 +525,12 @@
             const clipList = document.getElementById('clipList');
             const tweetList = document.getElementById('tweetList');
             const screenshotList = document.getElementById('screenshotList');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const pageSections = {
+                home: document.getElementById('page-home'),
+                tweets: document.getElementById('page-tweets'),
+                screenshots: document.getElementById('page-screenshots')
+            };
 
             // ─── user names ───
             const names = [
@@ -601,76 +618,103 @@
                 clipList.appendChild(card);
             });
 
-            // ─── render tweets ───
+            // ─── render tweets (clickable images) ───
             tweets.forEach((url, index) => {
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
 
                 const img = document.createElement('img');
                 img.src = url;
                 img.alt = `Tweet ${index + 1}`;
                 img.loading = 'lazy';
 
+                link.appendChild(img);
+
                 const label = document.createElement('div');
                 label.className = 'gallery-label';
                 label.textContent = `tweet ${index + 1}`;
 
-                item.appendChild(img);
+                item.appendChild(link);
                 item.appendChild(label);
                 tweetList.appendChild(item);
             });
 
-            // ─── render screenshots ───
+            // ─── render screenshots (clickable images) ───
             screenshots.forEach((url, index) => {
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
 
                 const img = document.createElement('img');
                 img.src = url;
                 img.alt = `Screenshot ${index + 1}`;
                 img.loading = 'lazy';
 
+                link.appendChild(img);
+
                 const label = document.createElement('div');
                 label.className = 'gallery-label';
                 label.textContent = `screenshot ${index + 1}`;
 
-                item.appendChild(img);
+                item.appendChild(link);
                 item.appendChild(label);
                 screenshotList.appendChild(item);
             });
 
-            // ─── navigation tabs ───
-            const tabs = document.querySelectorAll('.nav-tab');
-            const pages = {
-                home: document.getElementById('page-home'),
-                tweets: document.getElementById('page-tweets'),
-                screenshots: document.getElementById('page-screenshots')
-            };
+            // ─── routing: handle hash changes ───
+            function navigateTo(page) {
+                // update active tab
+                navTabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.page === page);
+                });
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // update active tab
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
+                // show/hide pages
+                Object.keys(pageSections).forEach(key => {
+                    pageSections[key].classList.toggle('active', key === page);
+                });
 
-                    // show/hide pages
+                // update search placeholder
+                if (page === 'home') {
+                    searchInput.placeholder = 'Search users &amp; clips…';
+                } else if (page === 'tweets') {
+                    searchInput.placeholder = 'Search tweets…';
+                } else if (page === 'screenshots') {
+                    searchInput.placeholder = 'Search screenshots…';
+                }
+
+                // clear search input and reset filters
+                searchInput.value = '';
+                filterContent('');
+            }
+
+            function hashChanged() {
+                const hash = window.location.hash.slice(1) || 'home';
+                if (['home', 'tweets', 'screenshots'].includes(hash)) {
+                    navigateTo(hash);
+                } else {
+                    // fallback to home
+                    window.location.hash = 'home';
+                }
+            }
+
+            // listen to hash changes
+            window.addEventListener('hashchange', hashChanged);
+
+            // click on nav tabs -> update hash
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
                     const page = this.dataset.page;
-                    Object.keys(pages).forEach(key => {
-                        pages[key].classList.toggle('active', key === page);
-                    });
-
-                    // update search placeholder based on page
-                    if (page === 'home') {
-                        searchInput.placeholder = 'Search users &amp; clips…';
-                    } else if (page === 'tweets') {
-                        searchInput.placeholder = 'Search tweets…';
-                    } else if (page === 'screenshots') {
-                        searchInput.placeholder = 'Search screenshots…';
-                    }
-
-                    // clear search input and reset filters when switching pages
-                    searchInput.value = '';
-                    filterContent('');
+                    window.location.hash = page;
                 });
             });
 
@@ -766,6 +810,13 @@
             document.querySelectorAll('.clip-card video').forEach(v => {
                 v.volume = 1.0;
             });
+
+            // ─── initial route ───
+            if (!window.location.hash) {
+                window.location.hash = 'home';
+            } else {
+                hashChanged();
+            }
 
             console.log('🎬 clipfarmmaxxing.lol loaded (volume = FULL)');
             console.log('📁 clips sourced from catbox.moe and the clipfarmmaxxing-clips repo');
