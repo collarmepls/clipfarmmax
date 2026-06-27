@@ -320,7 +320,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* ── page sections (hide/show via hash) ── */
+        /* ── page sections (hide/show) ── */
         .page-section {
             display: none;
         }
@@ -445,11 +445,11 @@
     <!-- ═══ MAIN CONTENT ═══ -->
     <div class="container mx-auto px-4 py-6 relative z-10">
 
-        <!-- Navigation Tabs (using hash links) -->
+        <!-- Navigation Tabs (using query parameters) -->
         <div class="nav-tabs">
-            <a href="#home" class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</a>
-            <a href="#tweets" class="nav-tab" data-page="tweets">🐦 Funny Tweets</a>
-            <a href="#screenshots" class="nav-tab" data-page="screenshots">📸 Funny Screenshots</a>
+            <a href="?page=home" class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</a>
+            <a href="?page=tweets" class="nav-tab" data-page="tweets">🐦 Funny Tweets</a>
+            <a href="?page=screenshots" class="nav-tab" data-page="screenshots">📸 Funny Screenshots</a>
         </div>
 
         <!-- Search -->
@@ -670,7 +670,7 @@
                 screenshotList.appendChild(item);
             });
 
-            // ─── routing: handle hash changes ───
+            // ─── routing: handle query parameter ───
             function navigateTo(page) {
                 // update active tab
                 navTabs.forEach(tab => {
@@ -696,27 +696,41 @@
                 filterContent('');
             }
 
-            function hashChanged() {
-                const hash = window.location.hash.slice(1) || 'home';
-                if (['home', 'tweets', 'screenshots'].includes(hash)) {
-                    navigateTo(hash);
-                } else {
-                    // fallback to home
-                    window.location.hash = 'home';
-                }
+            function getPageFromUrl() {
+                const params = new URLSearchParams(window.location.search);
+                const page = params.get('page') || 'home';
+                return ['home', 'tweets', 'screenshots'].includes(page) ? page : 'home';
             }
 
-            // listen to hash changes
-            window.addEventListener('hashchange', hashChanged);
+            function updateUrl(page) {
+                const url = new URL(window.location);
+                url.search = `?page=${page}`;
+                window.history.pushState({ page: page }, '', url);
+            }
 
-            // click on nav tabs -> update hash
+            // handle popstate (back/forward)
+            window.addEventListener('popstate', function(event) {
+                const page = event.state?.page || getPageFromUrl();
+                navigateTo(page);
+            });
+
+            // click on nav tabs -> update URL and navigate
             navTabs.forEach(tab => {
                 tab.addEventListener('click', function(e) {
                     e.preventDefault();
                     const page = this.dataset.page;
-                    window.location.hash = page;
+                    updateUrl(page);
+                    navigateTo(page);
                 });
             });
+
+            // initial load: set page from URL
+            const initialPage = getPageFromUrl();
+            // if URL has no param, set it to home
+            if (!window.location.search.includes('page=')) {
+                updateUrl('home');
+            }
+            navigateTo(initialPage);
 
             // ─── search function ───
             function filterContent(term) {
@@ -810,13 +824,6 @@
             document.querySelectorAll('.clip-card video').forEach(v => {
                 v.volume = 1.0;
             });
-
-            // ─── initial route ───
-            if (!window.location.hash) {
-                window.location.hash = 'home';
-            } else {
-                hashChanged();
-            }
 
             console.log('🎬 clipfarmmaxxing.lol loaded (volume = FULL)');
             console.log('📁 clips sourced from catbox.moe and the clipfarmmaxxing-clips repo');
