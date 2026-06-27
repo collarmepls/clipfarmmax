@@ -13,15 +13,15 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="clipfarmmaxxing.lol">
     <meta property="og:description" content="clip farm central.">
-    <!-- NEW: replaced gangmonkeys.png with clipfarmmaxxing.lol.png from your GitHub repo -->
-    <meta property="og:image" content="https://raw.githubusercontent.com/trojaninfect/clipfarmmax/main/clipfarmmaxxing.lol.png">
+    <!-- Banner image from the new clips repository -->
+    <meta property="og:image" content="https://raw.githubusercontent.com/trojaninfect/clipfarmmaxxing-clips/main/clipfarmmaxxing.lol.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="twitter:domain" content="clipfarmmaxxing.lol">
     <meta property="twitter:url" content="https://clipfarmmaxxing.lol">
     <meta name="twitter:title" content="clipfarmmaxxing.lol">
     <meta name="twitter:description" content="clip farm central.">
-    <!-- NEW: twitter image also updated -->
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/trojaninfect/clipfarmmax/main/clipfarmmaxxing.lol.png">
+    <!-- Twitter image also updated -->
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/trojaninfect/clipfarmmaxxing-clips/main/clipfarmmaxxing.lol.png">
     <style>
         /* ── reset / base ── */
         * {
@@ -415,24 +415,23 @@
                 "gore"
             ];
 
-            // ─── clip data with new sources ───
-            // GitHub raw base for the repo "clipfarmmax"
-            const GITHUB_RAW = 'https://raw.githubusercontent.com/trojaninfect/clipfarmmax/main/';
+            // ─── NEW: clip data from the separate clips repository ───
+            const CLIPS_RAW = 'https://raw.githubusercontent.com/trojaninfect/clipfarmmaxxing-clips/main/';
 
             const clips = [
-                // catbox.moe hosted
+                // catbox.moe hosted (keep these as-is)
                 { title: "ryty off a gummy", file: "https://files.catbox.moe/6qd77w.mp4" },
                 { title: "accidentally burns down entire forest", file: "https://files.catbox.moe/kxqc16.webm" },
-                // GitHub hosted (raw) — all .webm
-                { title: "HELL NAHH", file: GITHUB_RAW + "HELL%20NAHH.webm" },
-                { title: "arkansas doubling down", file: GITHUB_RAW + "arkansas%20doubling%20down.webm" },
-                { title: "boing", file: GITHUB_RAW + "boing.webm" },
-                { title: "discipline", file: GITHUB_RAW + "discipline.webm" },
-                { title: "he fell asleep first", file: GITHUB_RAW + "he%20fell%20asleep%20first.webm" },
-                { title: "jay keeps saying bs pt1", file: GITHUB_RAW + "jay%20keeps%20saying%20bs%20pt1.webm" },
-                { title: "nick fantasises about 2ft dih", file: GITHUB_RAW + "nick%20fantasises%20about%202ft%20dih.webm" },
-                { title: "tech - ima shove my dih in my mouth", file: GITHUB_RAW + "tech%20-%20ima%20shove%20my%20dih%20in%20my%20mouth.webm" },
-                { title: "trolling 1", file: GITHUB_RAW + "trolling%201.webm" }
+                // All other clips now served from the new clips repository
+                { title: "HELL NAHH", file: CLIPS_RAW + "HELL%20NAHH.webm" },
+                { title: "arkansas doubling down", file: CLIPS_RAW + "arkansas%20doubling%20down.webm" },
+                { title: "boing", file: CLIPS_RAW + "boing.webm" },
+                { title: "discipline", file: CLIPS_RAW + "discipline.webm" },
+                { title: "he fell asleep first", file: CLIPS_RAW + "he%20fell%20asleep%20first.webm" },
+                { title: "jay keeps saying bs pt1", file: CLIPS_RAW + "jay%20keeps%20saying%20bs%20pt1.webm" },
+                { title: "nick fantasises about 2ft dih", file: CLIPS_RAW + "nick%20fantasises%20about%202ft%20dih.webm" },
+                { title: "tech - ima shove my dih in my mouth", file: CLIPS_RAW + "tech%20-%20ima%20shove%20my%20dih%20in%20my%20mouth.webm" },
+                { title: "trolling 1", file: CLIPS_RAW + "trolling%201.webm" }
             ];
 
             // ─── render users ───
@@ -538,7 +537,7 @@
             });
 
             console.log('🎬 clipfarmmaxxing.lol loaded (volume = FULL)');
-            console.log('📁 clips sourced from catbox.moe and GitHub repo');
+            console.log('📁 clips sourced from catbox.moe and the clipfarmmaxxing-clips repo');
         })();
     </script>
 
