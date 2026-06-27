@@ -13,14 +13,12 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="clipfarmmaxxing.lol">
     <meta property="og:description" content="clip farm central.">
-    <!-- Banner image from the new clips repository -->
     <meta property="og:image" content="https://raw.githubusercontent.com/trojaninfect/clipfarmmaxxing-clips/main/clipfarmmaxxing.lol.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="twitter:domain" content="clipfarmmaxxing.lol">
     <meta property="twitter:url" content="https://clipfarmmaxxing.lol">
     <meta name="twitter:title" content="clipfarmmaxxing.lol">
     <meta name="twitter:description" content="clip farm central.">
-    <!-- Twitter image also updated -->
     <meta name="twitter:image" content="https://raw.githubusercontent.com/trojaninfect/clipfarmmaxxing-clips/main/clipfarmmaxxing.lol.png">
     <style>
         /* ── reset / base ── */
@@ -155,6 +153,37 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
+        /* ── navigation tabs ── */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 10px 0 20px;
+            flex-wrap: wrap;
+        }
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            padding: 8px 22px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+        }
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+        }
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+        }
+
         /* ── section dividers ── */
         .section-divider {
             height: 2px;
@@ -242,6 +271,52 @@
             padding: 0 4px;
         }
 
+        /* ── image gallery for tweets & screenshots ── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 28px;
+            padding: 0 5% 10px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .gallery-item {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 14px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(6px);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .gallery-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .gallery-item img {
+            width: 100%;
+            border-radius: 10px;
+            background: #111;
+            display: block;
+        }
+        .gallery-item .gallery-label {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        /* ── page sections (hide/show) ── */
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+
         /* ── clock ── */
         #clock {
             position: fixed;
@@ -289,7 +364,8 @@
 
         /* ── responsive tweaks ── */
         @media (max-width: 640px) {
-            .clips-grid {
+            .clips-grid,
+            .gallery-grid {
                 grid-template-columns: 1fr;
                 gap: 18px;
                 padding: 0 12px;
@@ -307,6 +383,13 @@
             }
             #volume-slider {
                 width: 54px;
+            }
+            .nav-tabs {
+                gap: 8px;
+            }
+            .nav-tab {
+                padding: 6px 14px;
+                font-size: 0.75rem;
             }
             #clock {
                 font-size: 0.8rem;
@@ -351,28 +434,58 @@
     <!-- ═══ MAIN CONTENT ═══ -->
     <div class="container mx-auto px-4 py-6 relative z-10">
 
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-page="home"><i class="fas fa-home mr-2"></i>Home</button>
+            <button class="nav-tab" data-page="tweets"><i class="fas fa-twitter mr-2"></i>Funny Tweets</button>
+            <button class="nav-tab" data-page="screenshots"><i class="fas fa-image mr-2"></i>Funny Screenshots</button>
+        </div>
+
         <!-- Search -->
         <div id="search-container">
             <input type="text" id="search-input" placeholder="Search users &amp; clips…" />
         </div>
 
-        <!-- ─── Users ─── -->
-        <div class="section-divider"></div>
-        <div id="users-section">
-            <h2 class="section-title"><i class="fas fa-users mr-3"></i>Users</h2>
-            <div class="names-container" id="userList"></div>
+        <!-- ═══ PAGE: HOME ═══ -->
+        <div id="page-home" class="page-section active">
+
+            <!-- ─── Users ─── -->
+            <div class="section-divider"></div>
+            <div id="users-section">
+                <h2 class="section-title"><i class="fas fa-users mr-3"></i>Users</h2>
+                <div class="names-container" id="userList"></div>
+            </div>
+
+            <!-- ─── Clips ─── -->
+            <div class="section-divider"></div>
+            <div id="clips-section">
+                <h2 class="section-title"><i class="fas fa-video mr-3"></i>Clips</h2>
+                <p class="text-center text-gray-400 text-sm md:text-base px-4 mb-6 italic">
+                    some of these clips are from months ago some are recent and a few were when my mic didnt get recorded by medal, more clips soon!
+                </p>
+                <div class="clips-grid" id="clipList"></div>
+            </div>
+
         </div>
 
-        <!-- ─── Clips ─── -->
-        <div class="section-divider"></div>
-        <div id="clips-section">
-            <h2 class="section-title"><i class="fas fa-video mr-3"></i>Clips</h2>
+        <!-- ═══ PAGE: FUNNY TWEETS ═══ -->
+        <div id="page-tweets" class="page-section">
+            <div class="section-divider"></div>
+            <h2 class="section-title"><i class="fas fa-twitter mr-3"></i>Funny Tweets</h2>
             <p class="text-center text-gray-400 text-sm md:text-base px-4 mb-6 italic">
-                some of these clips are from months ago some are recent and a few were when my mic didnt get recorded by medal, more clips soon!
+                a curated collection of the funniest tweets
             </p>
-            <div class="clips-grid" id="clipList">
-                <!-- Clips will be rendered here -->
-            </div>
+            <div class="gallery-grid" id="tweetList"></div>
+        </div>
+
+        <!-- ═══ PAGE: FUNNY SCREENSHOTS ═══ -->
+        <div id="page-screenshots" class="page-section">
+            <div class="section-divider"></div>
+            <h2 class="section-title"><i class="fas fa-image mr-3"></i>Funny Screenshots</h2>
+            <p class="text-center text-gray-400 text-sm md:text-base px-4 mb-6 italic">
+                a curated collection of the funniest screenshots
+            </p>
+            <div class="gallery-grid" id="screenshotList"></div>
         </div>
 
         <!-- spacer -->
@@ -399,6 +512,8 @@
             const searchInput = document.getElementById('search-input');
             const userList = document.getElementById('userList');
             const clipList = document.getElementById('clipList');
+            const tweetList = document.getElementById('tweetList');
+            const screenshotList = document.getElementById('screenshotList');
 
             // ─── user names ───
             const names = [
@@ -415,14 +530,12 @@
                 "gore"
             ];
 
-            // ─── NEW: clip data from the separate clips repository ───
+            // ─── clip data ───
             const CLIPS_RAW = 'https://raw.githubusercontent.com/trojaninfect/clipfarmmaxxing-clips/main/';
 
             const clips = [
-                // catbox.moe hosted (keep these as-is)
                 { title: "ryty off a gummy", file: "https://files.catbox.moe/6qd77w.mp4" },
                 { title: "accidentally burns down entire forest", file: "https://files.catbox.moe/kxqc16.webm" },
-                // All other clips now served from the new clips repository
                 { title: "HELL NAHH", file: CLIPS_RAW + "HELL%20NAHH.webm" },
                 { title: "arkansas doubling down", file: CLIPS_RAW + "arkansas%20doubling%20down.webm" },
                 { title: "boing", file: CLIPS_RAW + "boing.webm" },
@@ -434,6 +547,26 @@
                 { title: "trolling 1", file: CLIPS_RAW + "trolling%201.webm" }
             ];
 
+            // ─── tweet images ───
+            const tweets = [
+                "https://files.catbox.moe/z2l0n8.png",
+                "https://files.catbox.moe/bao8vt.png",
+                "https://files.catbox.moe/3p8xxd.png",
+                "https://files.catbox.moe/8d2t9b.png",
+                "https://files.catbox.moe/ytwsgs.png",
+                "https://files.catbox.moe/41ylln.png",
+                "https://files.catbox.moe/y41vck.png",
+                "https://files.catbox.moe/uyg1c4.png",
+                "https://files.catbox.moe/cae84x.png",
+                "https://files.catbox.moe/obd07i.png",
+                "https://files.catbox.moe/5svi9t.png"
+            ];
+
+            // ─── screenshot images ───
+            const screenshots = [
+                "https://files.catbox.moe/mtwaqa.png"
+            ];
+
             // ─── render users ───
             names.forEach(name => {
                 const tag = document.createElement('div');
@@ -442,7 +575,7 @@
                 userList.appendChild(tag);
             });
 
-            // ─── render clips (with video elements) ───
+            // ─── render clips ───
             clips.forEach(clip => {
                 const card = document.createElement('div');
                 card.className = 'clip-card';
@@ -466,6 +599,116 @@
                 card.appendChild(titleEl);
                 card.appendChild(metaEl);
                 clipList.appendChild(card);
+            });
+
+            // ─── render tweets ───
+            tweets.forEach((url, index) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Tweet ${index + 1}`;
+                img.loading = 'lazy';
+
+                const label = document.createElement('div');
+                label.className = 'gallery-label';
+                label.textContent = `tweet ${index + 1}`;
+
+                item.appendChild(img);
+                item.appendChild(label);
+                tweetList.appendChild(item);
+            });
+
+            // ─── render screenshots ───
+            screenshots.forEach((url, index) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Screenshot ${index + 1}`;
+                img.loading = 'lazy';
+
+                const label = document.createElement('div');
+                label.className = 'gallery-label';
+                label.textContent = `screenshot ${index + 1}`;
+
+                item.appendChild(img);
+                item.appendChild(label);
+                screenshotList.appendChild(item);
+            });
+
+            // ─── navigation tabs ───
+            const tabs = document.querySelectorAll('.nav-tab');
+            const pages = {
+                home: document.getElementById('page-home'),
+                tweets: document.getElementById('page-tweets'),
+                screenshots: document.getElementById('page-screenshots')
+            };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // show/hide pages
+                    const page = this.dataset.page;
+                    Object.keys(pages).forEach(key => {
+                        pages[key].classList.toggle('active', key === page);
+                    });
+
+                    // update search placeholder based on page
+                    if (page === 'home') {
+                        searchInput.placeholder = 'Search users &amp; clips…';
+                    } else if (page === 'tweets') {
+                        searchInput.placeholder = 'Search tweets…';
+                    } else if (page === 'screenshots') {
+                        searchInput.placeholder = 'Search screenshots…';
+                    }
+
+                    // clear search input and reset filters when switching pages
+                    searchInput.value = '';
+                    filterContent('');
+                });
+            });
+
+            // ─── search function ───
+            function filterContent(term) {
+                const activePage = document.querySelector('.nav-tab.active');
+                if (!activePage) return;
+                const page = activePage.dataset.page;
+
+                if (page === 'home') {
+                    // filter name tags
+                    document.querySelectorAll('.name-tag').forEach(el => {
+                        el.style.display = el.textContent.toLowerCase().includes(term) ? 'inline-block' : 'none';
+                    });
+                    // filter clip cards
+                    document.querySelectorAll('.clip-card').forEach(el => {
+                        const title = el.querySelector('.clip-title')?.textContent?.toLowerCase() || '';
+                        el.style.display = title.includes(term) ? 'flex' : 'none';
+                    });
+                } else if (page === 'tweets') {
+                    // filter tweet gallery items
+                    document.querySelectorAll('#tweetList .gallery-item').forEach(el => {
+                        const label = el.querySelector('.gallery-label')?.textContent?.toLowerCase() || '';
+                        el.style.display = label.includes(term) ? 'flex' : 'none';
+                    });
+                } else if (page === 'screenshots') {
+                    // filter screenshot gallery items
+                    document.querySelectorAll('#screenshotList .gallery-item').forEach(el => {
+                        const label = el.querySelector('.gallery-label')?.textContent?.toLowerCase() || '';
+                        el.style.display = label.includes(term) ? 'flex' : 'none';
+                    });
+                }
+            }
+
+            // ─── search input ───
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase().trim();
+                filterContent(term);
             });
 
             // ─── enter site ───
@@ -510,18 +753,6 @@
             }
             checkBedTime();
             setInterval(checkBedTime, 60000);
-
-            // ─── search ───
-            searchInput.addEventListener('input', function() {
-                const term = this.value.toLowerCase().trim();
-                document.querySelectorAll('.name-tag').forEach(el => {
-                    el.style.display = el.textContent.toLowerCase().includes(term) ? 'inline-block' : 'none';
-                });
-                document.querySelectorAll('.clip-card').forEach(el => {
-                    const title = el.querySelector('.clip-title')?.textContent?.toLowerCase() || '';
-                    el.style.display = title.includes(term) ? 'flex' : 'none';
-                });
-            });
 
             // ─── click resume ───
             document.addEventListener('click', function() {
