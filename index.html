@@ -1,1 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>clipfarmmaxxing.lol</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="clip farm central.">
+    <meta property="og:url" content="https://clipfarmmaxxing.lol">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="clipfarmmaxxing.lol">
+    <meta property="og:description" content="clip farm central.">
+    <meta property="og:image" content="https://r2.gangmonkeys.com/gangmonkeys/gangmonkeys.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="clipfarmmaxxing.lol">
+    <meta property="twitter:url" content="https://clipfarmmaxxing.lol">
+    <meta name="twitter:title" content="clipfarmmaxxing.lol">
+    <meta name="twitter:description" content="clip farm central.">
+    <meta name="twitter:image" content="https://r2.gangmonkeys.com/gangmonkeys/gangmonkeys.png">
+    <style>
+        /* ── reset / base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            color: #fff;
+            background: #000;
+            min-height: 100vh;
+        }
+
+        /* ── overlay ── */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            transition: opacity 0.6s ease;
+            text-align: center;
+            user-select: none;
+        }
+        #overlay .title {
+            font-size: clamp(2.5rem, 10vw, 5rem);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 12px #fff, 0 0 30px #e60073, 0 0 50px #e60073;
+            animation: pulse 2s infinite;
+        }
+        #overlay .sub {
+            margin-top: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.6rem);
+            animation: bounce 1.8s infinite;
+            opacity: 0.8;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.04);
+            }
+        }
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ── background video ── */
+        #bgVideo {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        .blur-overlay {
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(6px);
+            z-index: -1;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        /* ── volume slider ── */
+        .volume-slider-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 14px 6px 10px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .volume-slider-container i {
+            font-size: 1rem;
+            color: #fff;
+        }
+        #volume-slider {
+            width: 80px;
+            cursor: pointer;
+            accent-color: #fff;
+            background: transparent;
+        }
+
+        /* ── search ── */
+        #search-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 20px;
+        }
+        #search-input {
+            width: 60%;
+            max-width: 600px;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.13);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        #search-input:focus {
+            background: rgba(255, 255, 255, 0.22);
+            width: 72%;
+        }
+        #search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ── section dividers ── */
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            margin: 40px 10%;
+        }
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+
+        /* ── name tags ── */
+        .names-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4px 20px 10px;
+            gap: 8px;
+        }
+        .name-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 7px 16px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.2s ease;
+            font-size: 0.92rem;
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.3px;
+        }
+        .name-tag:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ── clips grid ── */
+        .clips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+            padding: 0 5% 10px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .clip-card {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 14px;
+            padding: 14px 14px 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+        }
+        .clip-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .clip-card video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 10px;
+            background: #111;
+            margin-bottom: 10px;
+            object-fit: cover;
+        }
+        .clip-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            padding: 0 4px;
+        }
+        .clip-meta {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 0 4px;
+        }
+
+        /* ── clock ── */
+        #clock {
+            position: fixed;
+            bottom: 22px;
+            left: 22px;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 14px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 100;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* ── bed-time popup ── */
+        #timeCheckPopup {
+            position: fixed;
+            bottom: 76px;
+            left: 22px;
+            background: rgba(200, 30, 30, 0.8);
+            padding: 10px 18px;
+            border-radius: 30px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 100;
+            font-weight: 600;
+            animation: shake 0.5s;
+            display: none;
+            font-size: 0.95rem;
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-6px);
+            }
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        /* ── responsive tweaks ── */
+        @media (max-width: 640px) {
+            .clips-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+                padding: 0 12px;
+            }
+            #search-input {
+                width: 85%;
+            }
+            #search-input:focus {
+                width: 92%;
+            }
+            .volume-slider-container {
+                top: 12px;
+                right: 12px;
+                padding: 4px 10px 4px 8px;
+            }
+            #volume-slider {
+                width: 54px;
+            }
+            #clock {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+                bottom: 16px;
+                left: 16px;
+            }
+            #timeCheckPopup {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+                bottom: 66px;
+                left: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ CLICK TO ENTER OVERLAY ═══ -->
+    <div id="overlay" role="button" aria-label="Click to Enter" onclick="enterSite()">
+        <div>
+            <div class="title">clipfarmmaxxing.lol</div>
+            <div class="sub"><i class="fas fa-chevron-down mr-2"></i> Click to Enter</div>
+        </div>
+    </div>
+
+    <!-- ═══ VOLUME CONTROL (default = full) ═══ -->
+    <div class="volume-slider-container">
+        <i class="fas fa-volume-up"></i>
+        <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="1.0">
+    </div>
+
+    <!-- ═══ BACKGROUND VIDEO ═══ -->
+    <video id="bgVideo" autoplay muted loop playsinline>
+        <source src="https://r2.gangmonkeys.com/gangmonkeys/bg.mp4" type="video/mp4" />
+    </video>
+    <div class="blur-overlay"></div>
+
+    <!-- ═══ BACKGROUND AUDIO ═══ -->
+    <audio id="bgAudio" src="https://r2.gangmonkeys.com/gangmonkeys/Roi.ogg" loop preload="auto"></audio>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="container mx-auto px-4 py-6 relative z-10">
+
+        <!-- Search -->
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Search users &amp; clips…" />
+        </div>
+
+        <!-- ─── Users ─── -->
+        <div class="section-divider"></div>
+        <div id="users-section">
+            <h2 class="section-title"><i class="fas fa-users mr-3"></i>Users</h2>
+            <div class="names-container" id="userList"></div>
+        </div>
+
+        <!-- ─── Clips ─── -->
+        <div class="section-divider"></div>
+        <div id="clips-section">
+            <h2 class="section-title"><i class="fas fa-video mr-3"></i>Clips</h2>
+            <p class="text-center text-gray-400 text-sm md:text-base px-4 mb-6 italic">
+                some of these clips are from months ago some are recent and a few were when my mic didnt get recorded by medal, more clips soon!
+            </p>
+            <div class="clips-grid" id="clipList">
+                <!-- Clips will be rendered here -->
+            </div>
+        </div>
+
+        <!-- spacer -->
+        <div style="height: 70px;"></div>
+    </div>
+
+    <!-- ═══ CLOCK ═══ -->
+    <div id="clock"></div>
+    <div id="timeCheckPopup"><i class="fas fa-moon mr-2"></i> You should go to bed!</div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ═══  JAVASCRIPT  ═══ -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ───
+            const overlay = document.getElementById('overlay');
+            const audio = document.getElementById('bgAudio');
+            const volumeSlider = document.getElementById('volume-slider');
+            const clockEl = document.getElementById('clock');
+            const popup = document.getElementById('timeCheckPopup');
+            const searchInput = document.getElementById('search-input');
+            const userList = document.getElementById('userList');
+            const clipList = document.getElementById('clipList');
+
+            // ─── user names ───
+            const names = [
+                "Winter / NoSleep",
+                "Remorcy",
+                "Jay",
+                "Ryty",
+                "Arkansas",
+                "LG / Lunar",
+                "Crawlspace",
+                "Mr irrelevant",
+                "Tech",
+                "Gideon",
+                "gore"
+            ];
+
+            // ─── clip data with new sources ───
+            // GitHub raw base for the repo "clipfarmmax"
+            const GITHUB_RAW = 'https://raw.githubusercontent.com/trojaninfect/clipfarmmax/main/';
+
+            const clips = [
+                // catbox.moe hosted
+                { title: "ryty off a gummy", file: "https://files.catbox.moe/6qd77w.mp4" },
+                { title: "accidentally burns down entire forest", file: "https://files.catbox.moe/kxqc16.webm" },
+                // GitHub hosted (raw) — all .webm
+                { title: "HELL NAHH", file: GITHUB_RAW + "HELL%20NAHH.webm" },
+                { title: "arkansas doubling down", file: GITHUB_RAW + "arkansas%20doubling%20down.webm" },
+                { title: "boing", file: GITHUB_RAW + "boing.webm" },
+                { title: "discipline", file: GITHUB_RAW + "discipline.webm" },
+                { title: "he fell asleep first", file: GITHUB_RAW + "he%20fell%20asleep%20first.webm" },
+                { title: "jay keeps saying bs pt1", file: GITHUB_RAW + "jay%20keeps%20saying%20bs%20pt1.webm" },
+                { title: "nick fantasises about 2ft dih", file: GITHUB_RAW + "nick%20fantasises%20about%202ft%20dih.webm" },
+                { title: "tech - ima shove my dih in my mouth", file: GITHUB_RAW + "tech%20-%20ima%20shove%20my%20dih%20in%20my%20mouth.webm" },
+                { title: "trolling 1", file: GITHUB_RAW + "trolling%201.webm" }
+            ];
+
+            // ─── render users ───
+            names.forEach(name => {
+                const tag = document.createElement('div');
+                tag.className = 'name-tag';
+                tag.textContent = name;
+                userList.appendChild(tag);
+            });
+
+            // ─── render clips (with video elements) ───
+            clips.forEach(clip => {
+                const card = document.createElement('div');
+                card.className = 'clip-card';
+
+                const video = document.createElement('video');
+                video.src = clip.file;
+                video.controls = true;
+                video.preload = 'metadata';
+                video.playsInline = true;
+                video.volume = 1.0;
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'clip-title';
+                titleEl.textContent = clip.title;
+
+                const metaEl = document.createElement('div');
+                metaEl.className = 'clip-meta';
+                metaEl.textContent = 'hosted';
+
+                card.appendChild(video);
+                card.appendChild(titleEl);
+                card.appendChild(metaEl);
+                clipList.appendChild(card);
+            });
+
+            // ─── enter site ───
+            window.enterSite = function() {
+                overlay.style.opacity = '0';
+                const vol = parseFloat(volumeSlider.value) || 1.0;
+                audio.volume = vol;
+                audio.play().catch(() => {});
+                document.querySelectorAll('.clip-card video').forEach(v => {
+                    v.volume = vol;
+                });
+                setTimeout(() => { overlay.style.display = 'none'; }, 550);
+            };
+
+            // ─── volume slider ───
+            volumeSlider.addEventListener('input', function() {
+                const val = parseFloat(this.value) || 0;
+                audio.volume = val;
+                document.querySelectorAll('.clip-card video').forEach(v => {
+                    v.volume = val;
+                });
+            });
+
+            // ─── clock ───
+            function updateClock() {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // ─── bed-time check ───
+            function checkBedTime() {
+                const h = new Date().getHours();
+                if (h >= 2 && h <= 6) {
+                    popup.style.display = 'block';
+                    clearTimeout(popup._timer);
+                    popup._timer = setTimeout(() => { popup.style.display = 'none'; }, 5000);
+                } else {
+                    popup.style.display = 'none';
+                }
+            }
+            checkBedTime();
+            setInterval(checkBedTime, 60000);
+
+            // ─── search ───
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase().trim();
+                document.querySelectorAll('.name-tag').forEach(el => {
+                    el.style.display = el.textContent.toLowerCase().includes(term) ? 'inline-block' : 'none';
+                });
+                document.querySelectorAll('.clip-card').forEach(el => {
+                    const title = el.querySelector('.clip-title')?.textContent?.toLowerCase() || '';
+                    el.style.display = title.includes(term) ? 'flex' : 'none';
+                });
+            });
+
+            // ─── click resume ───
+            document.addEventListener('click', function() {
+                if (overlay.style.display === 'none' && audio.paused) {
+                    audio.play().catch(() => {});
+                }
+            }, { passive: true });
+
+            // ─── set initial volume to full ───
+            audio.volume = 1.0;
+            document.querySelectorAll('.clip-card video').forEach(v => {
+                v.volume = 1.0;
+            });
+
+            console.log('🎬 clipfarmmaxxing.lol loaded (volume = FULL)');
+            console.log('📁 clips sourced from catbox.moe and GitHub repo');
+        })();
+    </script>
+
+</body>
+</html>
